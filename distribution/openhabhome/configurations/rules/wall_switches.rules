@@ -1,0 +1,43 @@
+import org.openhab.core.library.types.*
+import org.openhab.core.persistence.*
+import org.openhab.model.script.actions.*
+import org.joda.time.*
+import java.util.ArrayList
+
+val long WALL_DOUBLE_CLICK_MS = 1000
+val java.util.Map<String, org.joda.time.DateTime> wallSwitchLastCalls = newHashMap()
+val java.util.ArrayList<org.openhab.core.library.items.SwitchItem> itms = newArrayList(LCab, LKitch)
+
+val org.eclipse.xtext.xbase.lib.Functions$Function5 wallSwitchLogic = [
+	org.openhab.core.library.items.SwitchItem wallSwitch,
+	org.openhab.core.library.items.SwitchItem lightSwitch,
+	java.util.Map<String, org.joda.time.DateTime> lastCalls,
+	long timeout,
+	org.openhab.core.items.GroupItem items|		
+	if(wallSwitch.state == ON) {
+		//TODO: start spesial timer for dimmer
+	} else if(lastCalls.get(wallSwitch.name) == null || !now.isBefore(lastCalls.get(wallSwitch.name).plusMillis(timeout))){
+		if (lightSwitch.state == ON) {
+			lightSwitch.sendCommand(OFF)
+		} else
+		if (lightSwitch.state == OFF) {
+			lightSwitch.sendCommand(ON)
+		}	
+		lastCalls.put(wallSwitch.name, new org.joda.time.DateTime())
+	} else {
+		logInfo("My Rule", "Doubleclick!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		items?.members.forEach[item | logInfo("My Rule", item.name + " is ON")]
+		items?.members.filter(item|item.state == ON).forEach(item|item.sendCommand(OFF))
+	}
+	
+	
+]
+
+rule "Wall Switch Cabinet"
+when Item TCab received update then
+	wallSwitchLogic.apply(TCab, LCab, wallSwitchLastCalls, WALL_DOUBLE_CLICK_MS, null)
+end
+rule "Wall Switch Kitchen"
+when Item TKitch received update then
+	wallSwitchLogic.apply(TKitch, LKitch, wallSwitchLastCalls, WALL_DOUBLE_CLICK_MS, Test)
+end

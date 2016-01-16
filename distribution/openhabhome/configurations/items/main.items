@@ -1,0 +1,10 @@
+Group All
+
+Group Test "Тестирование" <video> (All)
+
+Switch LKitch 		"Кухня" 				(Test) 		{ http=	">[ON:GET:http://192.168.1.51/tac/?pt=8&cmd=8:1] >[OFF:GET:http://192.168.1.51/tac/?pt=8&cmd=8:0] <[http://192.168.1.51/tac/?pt=8&cmd=get:600000:REGEX((.*))]"	}	//p8
+Switch LCab 		"Кабинет" 				(Test) 		{ http=	">[ON:GET:http://192.168.1.51/tac/?pt=9&cmd=9:1] >[OFF:GET:http://192.168.1.51/tac/?pt=9&cmd=9:0] <[http://192.168.1.51/tac/?pt=9&cmd=get:600000:REGEX((.*))]"	}	//p9
+
+
+Switch TCab "Выключатель кабинет" () {megad= "=[192.168.1.51:2]"}
+Switch TKitch "Выключатель Кухня" () {megad= "=[192.168.1.51:1]"}

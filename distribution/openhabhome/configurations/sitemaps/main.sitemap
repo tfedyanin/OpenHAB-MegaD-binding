@@ -1,0 +1,7 @@
+sitemap demo label="Наша квартира"
+{
+	Frame label="Отладка" {
+		Switch item=TCab
+		Switch item=TKitch
+	}
+}
